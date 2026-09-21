@@ -1,0 +1,16 @@
+{
+  "name": "08_yt_backend",
+  "version": "1.0.0",
+  "description": "Backend Course",
+  "keywords": [
+    "javascript",
+    "backend"
+  ],
+  "license": "ISC",
+  "author": "Umar Qureshi",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
