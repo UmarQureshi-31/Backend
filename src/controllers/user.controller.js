@@ -111,6 +111,7 @@ const loginUser = asyncHandler(async (req, res) => {
   const user = await User.findOne({
     $or: [{ username }, { email }],
   });
+  // console.log(user);
 
   if (!user) {
     throw new ApiError(404, "User does not exist");
@@ -156,12 +157,12 @@ const logoutUser = asyncHandler(async (req, res) => {
   await User.findByIdAndUpdate(
     req.user._id,
     {
-      $set: {
-        refreshToken: undefined,
+      $unset: {
+        refreshToken: 1,
       },
     },
     {
-      new: true,
+      returnDocument: "after",
     }
   );
 
@@ -201,12 +202,13 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
       throw new ApiError(401, "Refresh token is expired or used");
     }
 
+    const { accessToken, newrefreshToken } =
+      await generateAccessAndRefreshTokens(user._id);
+
     const options = {
       httpOnly: true,
       secure: true,
     };
-    const { accessToken, newrefreshToken } =
-      await generateAccessAndRefreshTokens();
 
     return res
       .status(200)
@@ -215,7 +217,7 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
       .json(
         new ApiResponse(
           200,
-          { accessToken, newrefreshToken },
+          { accessToken, refreshToken: newrefreshToken },
           "Access token refreshed"
         )
       );
